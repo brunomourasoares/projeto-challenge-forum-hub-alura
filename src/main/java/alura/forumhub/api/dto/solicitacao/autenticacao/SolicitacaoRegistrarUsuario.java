@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record SolicitacaoCriarUsuario(
+public record SolicitacaoRegistrarUsuario(
         @NotBlank(message = "Nome é obrigatório")
         @Size(min = 3, max = 100, message = "Nome deve ter no mínimo 3 e no máximo 100 caracteres")
         String nome,

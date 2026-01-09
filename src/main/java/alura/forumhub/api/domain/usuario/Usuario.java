@@ -40,13 +40,4 @@ public class Usuario {
 
     @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY)
     private List<Resposta> respostas = new ArrayList<>();
-
-    public Usuario(Long id, String nome, String email, String senha, Boolean ativo, LocalDateTime dataCriacao) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.ativo = ativo;
-        this.dataCriacao = dataCriacao;
-    }
 }

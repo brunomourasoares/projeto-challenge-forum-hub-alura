@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public record SolicitacaoLogar(
         @NotBlank(message = "Email é obrigatório")
         @Email(message = "Email deve ser válido")
-        @Size(max = 100, message = "Email deve ter no máximo 100 caracteres")
+        @Size(min = 6 ,max = 100, message = "Email deve ter no máximo 100 caracteres")
         String email,
         @NotBlank(message = "Senha é obrigatória")
         @Size(min = 8, max = 100, message = "Senha deve ter entre 8 e 100 caracteres")

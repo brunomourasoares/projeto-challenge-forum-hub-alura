@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "b7a1395e-2b3a-495c-8311-43becc89ffe1",
+		"name": "Autenticação",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31673933",
+		"_collection_link": "https://www.postman.com/bms-developer/forumhub/collection/31673933-b7a1395e-2b3a-495c-8311-43becc89ffe1?action=share&source=collection_link&creator=31673933"
+	},
+	"item": [
+		{
+			"name": "Criar Usuário",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\":\"Bruno\",\r\n    \"email\":\"brunomourasoares@gmail.com\",\r\n    \"senha\":\"Mudar@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/registrar",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"token\", pm.response.json().token);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"brunomourasoares@gmail.com\",\r\n    \"senha\":\"Mudar@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/logar",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"logar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Criar Usuário Aleatório",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function gerarSenhaForte(tamanho = 8) {\r",
+							"    const maiusculas = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+							"    const minusculas = \"abcdefghijklmnopqrstuvwxyz\";\r",
+							"    const numeros = \"0123456789\";\r",
+							"    const simbolos = \"@#$%^&+=\";\r",
+							"\r",
+							"    let senha = [\r",
+							"        maiusculas[Math.floor(Math.random() * maiusculas.length)],\r",
+							"        minusculas[Math.floor(Math.random() * minusculas.length)],\r",
+							"        numeros[Math.floor(Math.random() * numeros.length)],\r",
+							"        simbolos[Math.floor(Math.random() * simbolos.length)]\r",
+							"    ];\r",
+							"\r",
+							"    const todos = maiusculas + minusculas + numeros + simbolos;\r",
+							"\r",
+							"    for (let i = senha.length; i < tamanho; i++) {\r",
+							"        senha.push(todos[Math.floor(Math.random() * todos.length)]);\r",
+							"    }\r",
+							"\r",
+							"    senha = senha.sort(() => Math.random() - 0.5).join('');\r",
+							"\r",
+							"    return senha;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"senhaAleatoria\", gerarSenhaForte(8));"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"emailAleatorio\", pm.response.json().email);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\":\"{{$randomFullName}}\",\r\n    \"email\":\"{{$randomEmail}}\",\r\n    \"senha\":\"{{senhaAleatoria}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/registrar",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logar  Aleatório",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"token\", pm.response.json().token);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"{{emailAleatorio}}\",\r\n    \"senha\":\"{{senhaAleatoria}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/logar",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"logar"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

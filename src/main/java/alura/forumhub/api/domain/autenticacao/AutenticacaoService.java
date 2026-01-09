@@ -3,9 +3,9 @@ package alura.forumhub.api.domain.autenticacao;
 import alura.forumhub.api.domain.perfil.PerfilRepository;
 import alura.forumhub.api.domain.usuario.Usuario;
 import alura.forumhub.api.domain.usuario.UsuarioRepository;
-import alura.forumhub.api.dto.resposta.autenticacao.RespostaCriarUsuario;
+import alura.forumhub.api.dto.resposta.autenticacao.RespostaRegistrarUsuario;
 import alura.forumhub.api.dto.resposta.autenticacao.RespostaLogar;
-import alura.forumhub.api.dto.solicitacao.autenticacao.SolicitacaoCriarUsuario;
+import alura.forumhub.api.dto.solicitacao.autenticacao.SolicitacaoRegistrarUsuario;
 import alura.forumhub.api.dto.solicitacao.autenticacao.SolicitacaoLogar;
 import alura.forumhub.api.infra.exception.UnauthorizedException;
 import alura.forumhub.api.infra.security.JwtUtils;
@@ -14,7 +14,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +41,10 @@ public class AutenticacaoService {
 
     public RespostaLogar logar(SolicitacaoLogar solicitacao) {
         try {
+            var eAtivo = usuarioRepository.findAtivoByEmail(solicitacao.email());
+            if (!eAtivo) {
+                throw new UnauthorizedException("Usuário bloqueado. Entre em contato com o suporte.");
+            }
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(solicitacao.email(), solicitacao.senha())
             );
@@ -53,7 +56,7 @@ public class AutenticacaoService {
     }
 
     @Transactional
-    public RespostaCriarUsuario criarUsuario(SolicitacaoCriarUsuario solicitacao) {
+    public RespostaRegistrarUsuario registrarUsuario(SolicitacaoRegistrarUsuario solicitacao) {
         var jaExiste = usuarioRepository.existsByEmail(solicitacao.email());
         if (jaExiste) {
             throw new EntityExistsException("Já existe um usuário com esse e-mail!");
@@ -61,11 +64,12 @@ public class AutenticacaoService {
         var usuario = new Usuario();
         BeanUtils.copyProperties(solicitacao, usuario);
         usuario.setSenha(passwordEncoder.encode(solicitacao.senha()));
-        var roleUser = perfilRepository.findById(2L).orElseThrow(() -> new IllegalStateException("Perfil ROLE_USER não encontrado."));
+        var roleUser = perfilRepository.findById(2L).orElseThrow(() -> new IllegalStateException("Perfil não encontrado."));
         usuario.setPerfil(roleUser);
         usuarioRepository.save(usuario);
-        var resposta = new RespostaCriarUsuario();
+        var resposta = new RespostaRegistrarUsuario();
         BeanUtils.copyProperties(usuario, resposta);
+        resposta.setPerfil(roleUser.getNome());
         return resposta;
     }
 }

@@ -23,21 +23,25 @@ public class OpenApiConfig {
     @Value("${spring.application.version}")
     private String appVersion;
 
+    @Value("${spring.application.email}")
+    private String appEmail;
+
+    @Value("${spring.application.website}")
+    private String appWebsite;
+
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "Bearer Authentication";
 
         return new OpenAPI()
             .info(new Info()
-                .title(appName + " - Documentação da API")
-                .description("""
-                    ForumHub API - Documentação
-                    """)
+                .title(appName + " API")
+                .description("API do Fórum Hub, uma plataforma para discussões e compartilhamento de conhecimento.")
                 .version(appVersion)
                 .contact(new Contact()
                     .name("Equipe de Desenvolvimento")
-                    .email("dev@example.com")
-                    .url("https://example.com"))
+                    .email(appEmail)
+                    .url(appWebsite))
                 .license(new License()
                     .name("Apache 2.0")
                     .url("https://www.apache.org/licenses/LICENSE-2.0.html")))
@@ -56,6 +60,6 @@ public class OpenApiConfig {
                     .type(SecurityScheme.Type.HTTP)
                     .scheme("bearer")
                     .bearerFormat("JWT")
-                    .description("Insira o token JWT obtido no login. Exemplo: `Bearer eyJhbGci...`")));
+                    .description("Insira o token JWT obtido no login. Exemplo: `eyJhbGciASAs11AS2asHHsashgbmm176asgzzjhf...`")));
     }
 }
